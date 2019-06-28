@@ -1,8 +1,7 @@
 import flask
 from app import app
-from views import api
 from models import User
-from utils import login_required
+from flask_fas_openid import fas_login_required
 
 from flask_fas_openid import fas_login_required, cla_plus_one_required, FAS
 
@@ -18,6 +17,7 @@ def auth_login():
     return_point = flask.url_for("requests")
     if "next" in flask.request.args:
         return_point = flask.request.args["next"]
+    print('RETURN POINT-------------------',return_point)
     if flask.g.fas_user:
         return flask.redirect(return_point)
     return fas.login(return_url=return_point)
@@ -28,6 +28,7 @@ def auth_logout():
     Method to log out currently logged in user from the application.
     
     """
+    print('-------------------logging out-------------------')
     return_point = flask.url_for("requests")
     if "next" in flask.request.args:
         return_point = flask.request.args["next"]
@@ -43,6 +44,7 @@ def set_user(return_url):
     """
     Set up user in app after FAS login.
     """
+    print('postlogin', return_url)
     if flask.g.fas_user.username is None:
         # flask.flash("Cannot go further without a username.",)
         fas.logout()
@@ -58,10 +60,11 @@ def set_user(return_url):
         )
         flask.g.session.add(new_user)
         flask.g.session.commit()
+    # return flask.redirect(return_url)
+    return flask.g.fas_user.username
 
-    return flask.redirect(return_url)
 
 @app.route('/logged_in')
-@login_required
+@fas_login_required
 def random():
     return 'hey, you can see me if youre logged in'

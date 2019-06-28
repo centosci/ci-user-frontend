@@ -2,40 +2,49 @@ from flask import Blueprint
 from app import app, db
 from flask_restplus import Api, Resource, fields
 from models import *
-from utils import login_required
+from flask_fas_openid import fas_login_required
 
-api = Api(app, title='API documentation', description='UI representation of the APIs for testing')
+# api = Api(app, title='API documentation', description='UI representation of the APIs for testing')
 
-class UuidField(fields.Raw):
-    __schema_format__ = 'uuid'
+@app.route('/')
+def index():
+    return 'Im the flask app home page'
 
-request = api.model('Requests', {
-    'user_id': UuidField('Unique user ID.'),
-    'project_name': fields.String('Name of Project requested.')
-})
+# class UuidField(fields.Raw):
+#     __schema_format__ = 'uuid'
 
-new_request = api.clone('Requests', request, {
-    'role': fields.String("Role granted to user. Represents permissions the user has to perform actions."),
-    'email': fields.String('Email address of the user.'),
-    'gpg_key': fields.String("User's GPG key required for password hashing.")
-})
+# request = api.model('Requests', {
+#     'user_id': UuidField('Unique user ID.'),
+#     'project_name': fields.String('Name of Project requested.')
+# })
 
-class Requests(Resource): 
+# new_request = api.clone('Requests', request, {
+#     'role': fields.String("Role granted to user. Represents permissions the user has to perform actions."),
+#     'email': fields.String('Email address of the user.'),
+#     'gpg_key': fields.String("User's GPG key required for password hashing.")
+# })
 
-    @api.marshal_with(request)  # only returns fields as defined in the api model
-    @api.response(404, 'No requests found.')
-    def get(self):
-        '''Get all project requests'''
-        return Request.query.all()
+# class Requests(Resource): 
 
-    @api.expect(new_request)        # only accepts payload as defined in the api model
-    @api.response(201, 'Request created successfully.')
-    def post(self):
-        '''Create a new project request'''
-        request = Request(**api.payload)
-        db.session.add(request)
-        db.session.commit()
-        return None, 201
-        # return {'message': f"Your request with ID: {request.id} has been created."}, 201
+#     @api.marshal_with(request)  # only returns fields as defined in the api model
+#     @api.response(404, 'No requests found.')
+#     def get(self):
+#         '''Get all project requests'''
+#         return Request.query.all()
 
-api.add_resource(Requests, '/requests', endpoint="requests")
+#     @api.expect(new_request)        # only accepts payload as defined in the api model
+#     @api.response(201, 'Request created successfully.')
+#     def post(self):
+#         '''Create a new project request'''
+#         request = Request(**api.payload)
+#         db.session.add(request)
+#         db.session.commit()
+#         return None, 201
+#         # return {'message': f"Your request with ID: {request.id} has been created."}, 201
+
+# api.add_resource(Requests, '/requests', endpoint="requests")
+
+@app.route('/requests')
+@fas_login_required
+def requests():
+    return 'this is the requests api'

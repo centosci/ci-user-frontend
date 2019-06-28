@@ -15,6 +15,7 @@ def set_request():
     """ 
     Preparing every request.
     """
+    print('session set')
     flask.session.permanent = True
     if not hasattr(flask.g, "session") or not flask.g.session:
         flask.g.session = create_session(flask.current_app.config["SQLALCHEMY_DATABASE_URI"])
@@ -45,16 +46,3 @@ def create_session(db_url=None, debug=False, pool_recycle=3600):
     scopedsession = scoped_session(SESSIONMAKER)
     BASE.metadata.bind = scopedsession
     return scopedsession
-
-def login_required(function):
-    """ 
-    Decorator function that restricts access to an endpoint for users who are not logged in.
-    """
-    @wraps(function)
-    def decorated_function(*args, **kwargs):
-        if not flask.g.fas_user:
-            return flask.redirect(flask.url_for("auth_login", next=flask.request.url))
-      
-        return function(*args, **kwargs)
-
-    return decorated_function
