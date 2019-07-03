@@ -1,0 +1,63 @@
+{% extends "main.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 style="font-weight: bold; font-size: 22px;">Create a Project Request</h2>
+    <div style="font-size: 15px; font-style: italic;">Add a new project ,  or request membership to an existing one. </div>
+    <br><br>
+    <form class="form-horizontal container" method="POST" action="/request/new">
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="textInput-markup">Username</label>
+            <div class="col-sm-6">
+            <input type="text" id="textInput-markup" class="form-control" name="username" value={{user.username}} placeholder="Please enter a username of your choice" disabled>
+            </div>
+        </div>
+        <div class="form-group">
+                <label class="col-sm-2 control-label" for="textInput-markup">Email Address</label>
+                <div class="col-sm-6">
+                <input type="text" id="textInput-markup" class="form-control" name="email" value={{user.email}} disabled>
+                </div>
+        </div>
+        <div class="btn-group" style="margin-left:200px;">
+                <button type="button" class="btn btn-default" id="existingProject">Select Existing Project</button>
+                <button type="button" class="btn btn-default" id="newProject">Add a New Project</button>
+        </div>
+        <br><br>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="textInput-markup">Project Name</label>
+            <div class="col-sm-6">
+            <input type="text" id="project_name" class="form-control" name="project_name" placeholder="Name of the project you want to onboard">
+            </div>
+        </div>
+        <div class="form-group">
+                <label class="col-sm-2 control-label" for="textInput-markup">Project Description</label>
+                <div class="col-sm-6">
+                <input type="text" id="textInput-markup project_desc" class="form-control" name="project_desc" placeholder="Description of the project in a few words...">
+                </div>
+        </div>
+        <div class="form-group">
+                <label class="col-sm-2 control-label" for="textInput-markup">GPG Public Key</label>
+                <div class="col-sm-6">
+                <input type="text" id="textInput-markup" class="form-control" name="gpg_key" placeholder="Please enter your GPG public key for secure encryption of sensitive information" value={{user.gpg_key}}>
+                </div>
+        </div>
+        <div class="col-sm-8 control-label"><button class="btn btn-primary" type="submit">Create Request</button></div>
+    </form>
+    <br>
+    {% if alert %}
+    <div class="alert alert-danger col-sm-8" role="alert">{{alert}}!</div>
+    {% elif success %}
+    <div class="alert alert-success col-sm-8" role="alert">Request successfully created with ID: {{success}}!</div>
+    {% endif %}
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#existingProject").on('click', function(){            
+            $("#project_name").removeAttr("disabled");
+        });
+    });
+</script>
+{% endblock %}
+

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}CentOS CI{% endblock %}</title>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.59.1/css/patternfly-additions.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.59.1/css/patternfly-additions.css.map">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.59.1/css/patternfly-additions.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.59.1/css/patternfly-additions.min.css.map">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.59.1/css/patternfly.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.59.1/css/patternfly.css.map">
+  <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/font-awesome/font-awesome.css') }}?version={{ g.version}}"/> -->
+  {% block header %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-pf-vertical">
+      <div class="navbar-header">
+        <a href="/" class="navbar-brand">
+          <img class="navbar-brand-icon" src="/static/logo.png" alt=""/>
+          <div class="navbar-brand-name" >Welcome to CentOS CI</div>
+        </a>
+      </div>
+      <nav class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-right navbar-iconic navbar-utility">
+        {% if user %}
+          <li class="dropdown">
+            <button class="btn btn-link dropdown-toggle nav-item-iconic" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <span class="dropdown-title">
+                Logged in as {{user.username}} <span class="caret"></span>
+              </span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+              <li><a href="/logout">Logout</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li>
+              <button class="btn btn-link dropdown-toggle nav-item-iconic" id="dropdownMenu2" >
+                  Please login to continue!  <a href="/login"> Login </a>
+              </button>    
+          </li>
+        {% endif %}
+        </ul>
+      </nav>
+    </nav>
+  <div class="nav-pf-vertical nav-pf-vertical-with-sub-menus ">
+  <ul class="list-group">
+    {% if url_for(request.endpoint, request_id='') == "/projects" %}
+    <li class="list-group-item active"> {% else %} <li class="list-group-item"> {% endif %}
+      <a href="/projects">
+          <span class="list-group-item-value">Projects</span>
+      </a>
+    </li>
+    {% if url_for(request.endpoint, request_id='') == "/request/new" %}
+    <li class="list-group-item active"> {% else %} <li class="list-group-item"> {% endif %}
+      <a href="/request/new">
+        <span class="list-group-item-value">Create New Request</span>
+      </a>
+    </li>
+    {% if url_for(request.endpoint, request_id='') == "/requests" %}
+    <li class="list-group-item active"> {% else %} <li class="list-group-item"> {% endif %}
+      <a href="/requests">
+        <span class="list-group-item-value">Project Requests</span>
+      </a>
+    </li>
+  </ul>
+  </div>
+
+  {% block content %}
+  {% endblock content %}
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.53.0/js/patternfly.min.js"></script>
+</body>
+</html>
+
+    
