@@ -45,27 +45,30 @@
     </nav>
   <div class="nav-pf-vertical nav-pf-vertical-with-sub-menus ">
   <ul class="list-group">
-    {% if url_for(request.endpoint) == "/projects" %}
+    {% if url_for(request.endpoint, request_id='') == "/projects" %}
     <li class="list-group-item active"> {% else %} <li class="list-group-item"> {% endif %}
       <a href="/projects">
           <span class="list-group-item-value">Projects</span>
       </a>
     </li>
-    <li class="list-group-item">
-      <a href="#0">
+    {% if url_for(request.endpoint, request_id='') == "/request/new" %}
+    <li class="list-group-item active"> {% else %} <li class="list-group-item"> {% endif %}
+      <a href="/request/new">
         <span class="list-group-item-value">Create New Request</span>
       </a>
     </li>
-    {% if url_for(request.endpoint) == "/requests" %}
+    {% if url_for(request.endpoint, request_id='') == "/requests" %}
     <li class="list-group-item active"> {% else %} <li class="list-group-item"> {% endif %}
       <a href="/requests">
         <span class="list-group-item-value">Project Requests</span>
       </a>
+    </li>
   </ul>
   </div>
 
   {% block content %}
   {% endblock content %}
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.53.0/js/patternfly.min.js"></script>

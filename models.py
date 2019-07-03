@@ -31,6 +31,7 @@ class Request(db.Model):
     id = db.Column(UUID(as_uuid=True), default=uuid.uuid1(), unique=True, primary_key=True)
     user_id = db.Column(UUID(), db.ForeignKey(User.id), nullable=False)
     project_name = db.Column(db.String())
+    project_desc = db.Column(db.String())
     status = db.Column(db.Enum(*RequestStatus, name='request_status'), default='pending')
     created_at = db.Column(db.TIMESTAMP, default=datetime.datetime.utcnow)
     updated_at = db.Column(db.TIMESTAMP, default=datetime.datetime.utcnow)
