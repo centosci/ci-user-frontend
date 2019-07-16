@@ -15,12 +15,11 @@ def set_request():
     """ 
     Preparing every request.
     """
-    print('session set')
-    flask.session.permanent = True
+    # flask.session.permanent = True  
     if not hasattr(flask.g, "session") or not flask.g.session:
         flask.g.session = create_session(flask.current_app.config["SQLALCHEMY_DATABASE_URI"])
 
-    flask.g.nonce = "".join(random.choice(string.ascii_letters + string.digits) for x in range(25))
+    # flask.g.nonce = "".join(random.choice(string.ascii_letters + string.digits) for x in range(25))
 
 def end_request(exception=None):
     """

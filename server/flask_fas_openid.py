@@ -130,16 +130,12 @@ class FAS(object):
         return f
 
     def _handle_openid_request(self):
-        print('_handle_openid_request session object ---------- ', flask.session)
         return_url = flask.session.get('FLASK_FAS_OPENID_RETURN_URL', None)
         cancel_url = flask.session.get('FLASK_FAS_OPENID_CANCEL_URL', None)
         base_url = self.normalize_url(flask.request.base_url)
-        print('base_url ---------- ',base_url)
-        print('flask.request.values ------ ', flask.request.values)
         oidconsumer = consumer.Consumer(flask.session, None)
         info = oidconsumer.complete(flask.request.values, base_url)
         display_identifier = info.getDisplayIdentifier()
-        print('openid info status ------------- ', info.status, info.message, info.identity_url)
         if info.status == consumer.FAILURE and display_identifier:
             return 'FAILURE. display_identifier: %s' % display_identifier
         elif info.status == consumer.CANCEL:
@@ -186,7 +182,6 @@ class FAS(object):
                 user['gpg_keyid'] = ax_resp.get(
                     'http://fedoauth.org/openid/schema/GPG/keyid')
             flask.session['FLASK_FAS_OPENID_USER'] = user
-            print("flask.session['FLASK_FAS_OPENID_USER'] ------ ",flask.session['FLASK_FAS_OPENID_USER'])
             flask.session.modified = True
             if self.postlogin_func is not None:
                 self._check_session()
@@ -199,7 +194,6 @@ class FAS(object):
     def _check_session(self):
         if 'FLASK_FAS_OPENID_USER' not in flask.session \
                 or flask.session['FLASK_FAS_OPENID_USER'] is None:
-            print('seesion.FLASK_FAS_OPENID_USER is NONE')
             flask.g.fas_user = None
         else:
             user = flask.session['FLASK_FAS_OPENID_USER']
@@ -240,7 +234,6 @@ class FAS(object):
         :returns: True if the user was succesfully authenticated.
         :raises: Might raise an redirect to the OpenID endpoint
         """
-        print('FAS PLUGIN RETURN URL---------------', return_url)
 
         if return_url is None:
             if 'next' in flask.request.args.values():
@@ -289,7 +282,6 @@ class FAS(object):
         trust_root = self.normalize_url(flask.request.url_root)
         return_to = trust_root + '_flask_fas_openid_handler/'
         flask.session['FLASK_FAS_OPENID_RETURN_URL'] = return_url
-        print('return url set in session -------',flask.session['FLASK_FAS_OPENID_RETURN_URL'])
         flask.session['FLASK_FAS_OPENID_CANCEL_URL'] = cancel_url
 
         # if request_wants_json():
@@ -298,8 +290,7 @@ class FAS(object):
         #     output['server_url'] = request.endpoint.server_url
         #     return flask.jsonify(output)
         # elif request.shouldSendRedirect():
-        # redirect_url = request.redirectURL(trust_root, return_to, False)
-        redirect_url = request.redirectURL('http://localhost:3000/', 'http://localhost:3000/logging_in/', False)
+        redirect_url = request.redirectURL(trust_root, return_to, False)
 
         # return flask.redirect(redirect_url)
         return redirect_url
@@ -312,8 +303,8 @@ class FAS(object):
         '''Logout the user associated with this session
         '''
         flask.session['FLASK_FAS_OPENID_USER'] = None
-        flask.g.fas_session_id = None
-        flask.g.fas_user = None
+        # flask.g.fas_session_id = None
+        # flask.g.fas_user = None
         flask.session.modified = True
 
     def normalize_url(self, url):
@@ -336,9 +327,8 @@ def fas_login_required(function):
     """
     @wraps(function)
     def decorated_function(*args, **kwargs):
-        if flask.g.fas_user is None:
-            return flask.redirect(flask.url_for('auth_login',
-                                                next=flask.request.url))
+        if not flask.session.get('FLASK_FAS_OPENID_USER'):
+            return flask.jsonify({'result': 'error', 'message': 'Please log in to continue.'}), 200
         return function(*args, **kwargs)
     return decorated_function
 

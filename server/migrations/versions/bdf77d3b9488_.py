@@ -49,6 +49,7 @@ def upgrade():
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('user_id', postgresql.UUID(), nullable=False),
     sa.Column('project_name', sa.String(), nullable=True),
+    sa.Column('project_desc', sa.String(), nullable=True),
     sa.Column('status', sa.Enum('pending', 'approved', 'declined', name='request_status'), nullable=True),
     sa.Column('created_at', sa.TIMESTAMP(), nullable=True),
     sa.Column('updated_at', sa.TIMESTAMP(), nullable=True),
