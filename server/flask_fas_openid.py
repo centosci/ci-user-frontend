@@ -136,7 +136,6 @@ class FAS(object):
         oidconsumer = consumer.Consumer(flask.session, None)
         info = oidconsumer.complete(flask.request.values, base_url)
         display_identifier = info.getDisplayIdentifier()
-
         if info.status == consumer.FAILURE and display_identifier:
             return 'FAILURE. display_identifier: %s' % display_identifier
         elif info.status == consumer.CANCEL:
@@ -235,6 +234,7 @@ class FAS(object):
         :returns: True if the user was succesfully authenticated.
         :raises: Might raise an redirect to the OpenID endpoint
         """
+
         if return_url is None:
             if 'next' in flask.request.args.values():
                 return_url = flask.request.args.values['next']
@@ -243,8 +243,10 @@ class FAS(object):
         # This makes sure that we only allow stuff where
         # ?next= value is in a safe root (the application
         # root)
-        return_url = (self._check_safe_root(return_url) or
-                      flask.request.url_root)
+
+        # return_url = (self._check_safe_root(return_url) or
+        #               flask.request.url_root)
+
         session = {}
         oidconsumer = consumer.Consumer(session, None)
         try:
@@ -279,29 +281,30 @@ class FAS(object):
 
         trust_root = self.normalize_url(flask.request.url_root)
         return_to = trust_root + '_flask_fas_openid_handler/'
-
         flask.session['FLASK_FAS_OPENID_RETURN_URL'] = return_url
         flask.session['FLASK_FAS_OPENID_CANCEL_URL'] = cancel_url
 
-        if request_wants_json():
-            output = request.getMessage(trust_root,
-                                        return_to=return_to).toPostArgs()
-            output['server_url'] = request.endpoint.server_url
-            return flask.jsonify(output)
-        elif request.shouldSendRedirect():
-            redirect_url = request.redirectURL(trust_root, return_to, False)
-            return flask.redirect(redirect_url)
-        else:
-            return request.htmlMarkup(
-                trust_root, return_to,
-                form_tag_attrs={'id': 'openid_message'}, immediate=False)
+        # if request_wants_json():
+        #     output = request.getMessage(trust_root,
+        #                                 return_to=return_to).toPostArgs()
+        #     output['server_url'] = request.endpoint.server_url
+        #     return flask.jsonify(output)
+        # elif request.shouldSendRedirect():
+        redirect_url = request.redirectURL(trust_root, return_to, False)
+
+        # return flask.redirect(redirect_url)
+        return redirect_url
+        # else:
+        #     return request.htmlMarkup(
+        #         trust_root, return_to,
+        #         form_tag_attrs={'id': 'openid_message'}, immediate=False)
 
     def logout(self):
         '''Logout the user associated with this session
         '''
         flask.session['FLASK_FAS_OPENID_USER'] = None
-        flask.g.fas_session_id = None
-        flask.g.fas_user = None
+        # flask.g.fas_session_id = None
+        # flask.g.fas_user = None
         flask.session.modified = True
 
     def normalize_url(self, url):
@@ -324,9 +327,8 @@ def fas_login_required(function):
     """
     @wraps(function)
     def decorated_function(*args, **kwargs):
-        if flask.g.fas_user is None:
-            return flask.redirect(flask.url_for('auth_login',
-                                                next=flask.request.url))
+        if not flask.session.get('FLASK_FAS_OPENID_USER'):
+            return flask.jsonify({'result': 'error', 'message': 'Please log in to continue.'}), 200
         return function(*args, **kwargs)
     return decorated_function
 
