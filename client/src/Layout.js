@@ -28,7 +28,7 @@ class Layout extends React.Component {
 
     state = {
       isDropdownOpen: false,
-      activeItem: 3,
+      activeItem: this.props.activeItem,
       user: '',
     };
 
@@ -54,6 +54,7 @@ class Layout extends React.Component {
         ).then(response => {
             if (response.data.message === 'You have successfully logged out' || response.data.message === 'User is already logged out') {
                 this.setState({user: ''})
+                window.location.reload()
             }
             else console.log('response.data',response.data)
         }).catch(err=>console.log(err))
@@ -98,7 +99,7 @@ class Layout extends React.Component {
     );
 
     const userDropdownItems = [
-        <DropdownItem style={{'background-color':'white', 'padding':'10px'}} onClick={this.logout}>Logout</DropdownItem>,
+        <DropdownItem onClick={this.logout} style={{'backgroundColor':'white', 'padding':'10px'}}>Logout</DropdownItem>,
     ];
 
     const PageToolbar = (

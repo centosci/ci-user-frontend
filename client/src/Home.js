@@ -6,7 +6,7 @@ import Layout from './Layout';
 function Home () {
     return (
       <Layout>
-      <div>
+      <div style={{'height':'100%'}}>
         <TextContent style={{'margin-left':'40px', 'margin-top':'20px'}}>
         <Text component="h1" style={{'font-size':'35px'}}>Welcome to CentOS CI</Text>
         <Text component="p">

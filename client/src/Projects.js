@@ -53,7 +53,7 @@ class Projects extends React.Component {
         }
 
         return (
-            <Layout>
+            <Layout activeItem={0}>
             <div>
             {!logged_in && <div>Please log in to view this page.</div>}
             {logged_in &&
