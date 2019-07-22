@@ -67,9 +67,38 @@ class RequestPage extends React.Component {
             
         }).then(response => {
 
-            console.log(response.data)
+            const url = 'http://localhost:5000/requests/'.concat(this.props.match.params.requestid)
+
+            axios.get(url, { withCredentials: true }
+            ).then(response => {
+                
+                this.setState({request: response.data.current_request, comments: response.data.comments})
+            
+            }).catch(err => console.log(err))
 
         }).catch(err => console.log(err))
+
+        if (action === 'approved') {
+            this.downloadFile()
+        }
+    }
+
+    downloadFile = () => {
+        
+        var FileSaver = require('file-saver');
+        var projectIsNew = this.state.request['project_desc'] == '' ? false : true;
+        var fileData = {
+            'project_name': this.state.request['project_name'],
+            'project_description': this.state.request['project_desc'],
+            'new_project': projectIsNew,
+            'request_id': this.state.request['id'],
+            'requested_on': this.state.request['created_at'],
+            'last_updated_on': this.state.request['updated_at']
+        }
+        var blob = new Blob([JSON.stringify(fileData)], {type: 'application/json'});
+        var fileName = this.state.request['project_name'].concat('.yaml')
+        FileSaver.saveAs(blob, fileName);
+
     }
 
     setRejectReason = value => {
@@ -98,6 +127,15 @@ class RequestPage extends React.Component {
 
             this.setState({new_comment: ''})
             console.log(response)
+            const url = 'http://localhost:5000/requests/'.concat(this.props.match.params.requestid)
+
+            axios.get(url, { withCredentials: true }
+            ).then(response => {
+                
+                this.setState({comments: response.data.comments})
+            
+            }).catch(err => console.log(err))
+
 
         }).catch(err => console.log(err))
     
@@ -117,9 +155,11 @@ class RequestPage extends React.Component {
                         {
                             request['project_desc'] != ''
                             ?
-                             <Label style={{'color':'white', 'background-color':'#008000', 'margin':'0px 0px 10px 0px', 'padding':'5px'}}>New Project</Label>
+                             <a download href="./logo.png">
+                             <Label style={{'background-color':'#C9F8FF', 'margin':'0px 0px 10px 0px', 'padding':'8px'}}>New Project</Label>
+                             </a>
                             :
-                             <Label style={{'color':'white', 'background-color':'#8B008B', 'margin':'0px 0px 10px 0px', 'padding':'5px'}}>Member Request</Label>
+                             <Label style={{'background-color':'#C9F8FF', 'margin':'0px 0px 10px 0px', 'padding':'5px'}}>Member Request</Label>
                         }
                     </TextContent>
 
@@ -148,13 +188,55 @@ class RequestPage extends React.Component {
                     </div>
                     }
                     
+                    {/* Approve or Reject Request */}
+                    {user['role'] === 'admin' && request['status'] === 'pending' &&
+                    <div>
+                    <Button
+                        style={{'margin':'20px 5px 20px 5px', 'padding':'8px', 'float':'left'}}
+                        onClick={()=>this.editRequest('approved')}
+                    >
+                    Approve Request
+                    </Button>
+                    <br/><br/>
+                    <FormGroup helperText="Please provide a reason to reject this project">
+                        <TextInput
+                            value={reject_reason}
+                            onChange={this.setRejectReason}
+                            type="text"
+                        />
+                        <Button
+                            style={{'margin':'10px 5px 10px 5px', 'padding':'7px', 'float':'right'}} 
+                            onClick={()=>this.editRequest('declined')}
+                            variant="danger"
+                            isDisabled={reject_reason == '' ? true : false}
+                        >
+                        Reject Request
+                        </Button>
+                    </FormGroup>
+                    </div>
+                    }
+
+                    {/* Download YAML button */}
+                    {user['role'] === 'admin' && request['status'] === 'approved' &&
+                    <div>
+                    <Button
+                        style={{'margin':'20px 5px 20px 5px', 'padding':'8px', 'float':'left'}}
+                        onClick={this.downloadFile}
+                        variant="primary"
+                    >
+                    Download File
+                    </Button>
+                    <br/>
+                    </div>
+                    }
+
                     {/* Comments Card */}
-                    <Card style={{'padding': '0px 30px 20px 30px', 'margin-top':'20px'}}>
+                    <Card style={{'padding': '0px 30px 20px 30px', 'margin-top':'60px'}}>
                         {comments.length < 1 
                             ? <CardBody>Looks like there are no comments for this request! <br/><br/></CardBody>
                             :   comments.map(comment => {
                                 return <div>
-                                        <Label style={{'background-color':'#C9F8FF', 'margin':'10px 10px 10px 0px', 'padding':'5px'}}>{comment['commented_by']}</Label>
+                                        <Label style={{'background-color':'#C9F8FF', 'margin':'10px 10px 10px 0px', 'padding':'5px'}}>{comment['commented_by']} -</Label>
                                         <Label>{comment['comment']}</Label>
                                     </div>
                                 })
@@ -177,34 +259,6 @@ class RequestPage extends React.Component {
                         </FormGroup>
                     </Card>
                     
-                    {/* Approve or Reject Request */}
-                    {user['role'] === 'admin' && request['status'] === 'pending' &&
-                    <div>
-                    <br/><br/><br/>
-                    <Button
-                        style={{'margin':'0px 5px 10px 5px', 'padding':'7px', 'float':'right'}}
-                        onClick={()=>this.editRequest('approved')}
-                    >
-                    Approve Request
-                    </Button>
-                    <br/><br/>
-                    <FormGroup helperText="Please provide a reason to reject this project.">
-                        <TextInput
-                            value={reject_reason}
-                            onChange={this.setRejectReason}
-                            type="text"
-                        />
-                        <Button
-                            style={{'margin':'10px 5px 10px 5px', 'padding':'7px', 'float':'right'}} 
-                            onClick={()=>this.editRequest('declined')}
-                            variant="danger"
-                            isDisabled={reject_reason == '' ? true : false}
-                        >
-                        Reject Request
-                        </Button>
-                    </FormGroup>
-                    </div>
-                    }
                 </div>
                 }
             </Layout>

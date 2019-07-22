@@ -11,6 +11,7 @@ import {
     ActionGroup,
     Button,
     Radio,
+    Alert
   } from '@patternfly/react-core';
   
 class RequestForm extends React.Component {
@@ -21,7 +22,8 @@ class RequestForm extends React.Component {
         project_name: '',
         project_desc: '',
         newProject: true,
-        gpg_key: ''
+        gpg_key: '',
+        submitResponse: {}
     };
 
     componentDidMount() {
@@ -70,7 +72,7 @@ class RequestForm extends React.Component {
         withCredentials: true
         })
         .then(response => {
-            console.log(response.data.message);
+          this.setState({submitResponse: response.data});
         })
         .catch(response => {
             console.log(response.data.message);
@@ -87,9 +89,11 @@ class RequestForm extends React.Component {
     ]
   
     render() {
-        const { user, project_name, project_desc, logged_in, gpg_key } = this.state;
+        const { user, project_name, project_desc, logged_in, gpg_key, submitResponse } = this.state;
+        var alertVariant;
+        submitResponse.result === 'success' ? alertVariant = 'success' : alertVariant = 'danger';
         return (
-        <Layout>
+        <Layout activeItem={1}>
         {!logged_in && <div>Please log in to view this page.</div>}
         {logged_in &&
         <div>
@@ -185,7 +189,9 @@ class RequestForm extends React.Component {
             <ActionGroup>
               <Button variant="primary" style={{'padding':'5px', 'margin':'5px 5px 5px 0px'}} onClick={this.submit}>Submit Request</Button>
             </ActionGroup>
-
+            {'message' in submitResponse &&
+              <Alert variant={alertVariant} style={{'padding':'5px', 'margin':'5px 5px 5px 0px'}}>{submitResponse.message}</Alert>
+            }
           </Form>
         </div>
         }
