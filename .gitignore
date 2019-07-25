@@ -1,8 +1,5 @@
 node_modules
 virtualenv
 yarn.lock
-__pycache__
 .vscode
-config.pyc
-venv
-.env
+.idea
