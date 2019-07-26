@@ -47,7 +47,7 @@ class Requests extends React.Component {
         }
 
         return (
-            <Layout>
+            <Layout activeItem={2}>
             <div>
             {!logged_in && <div>Please log in to view this page.</div>}
             {logged_in &&
