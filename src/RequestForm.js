@@ -19,6 +19,7 @@ class RequestForm extends React.Component {
     state = {
         logged_in: false,
         user: '',
+        options: [],
         project_name: '',
         project_desc: '',
         newProject: true,
@@ -27,12 +28,35 @@ class RequestForm extends React.Component {
     };
 
     componentDidMount() {
-        axios.get('http://localhost:5000/user', { withCredentials: true }
+
+      // Get the logged in user
+        axios.get('http://localhost:5000/user', { withCredentials: true}
         ).then(response => {
+
             if (response.data.message !== 'Please log in to continue.') {
                 this.setState({logged_in: true, user: response.data, gpg_key:response.data['gpg_key']})
             }
+
             else this.setState({user: '', logged_in: false});
+
+        }).then(() => {
+
+          // Load existing projects for dropdown list
+          axios.get('http://localhost:5000/projects', { withCredentials: true}
+          ).then(response => {
+
+            var options = [{value: '', label: '', disabled: false}];
+            if (response.data.projects.length > 0) {
+              response.data.projects.map(project => {
+                var option = { value: project['project_name'], label: project['project_name'], disabled: false}
+                options.push(option)
+                return option
+              })
+              this.setState({options})
+
+            }
+
+          }).catch(err=>console.log(err))
         }).catch(err=>console.log(err))
     }
 
@@ -72,25 +96,17 @@ class RequestForm extends React.Component {
         withCredentials: true
         })
         .then(response => {
-          this.setState({submitResponse: response.data});
+          this.setState({submitResponse: response.data, project_desc: '', project_name: ''});
         })
         .catch(response => {
             console.log(response.data.message);
         });
     }
-
-    options = [
-        { value: 'project1', label: 'Project ABC', disabled: false },
-        { value: 'apple project', label: 'Apple project', disabled: false },
-        { value: 'mango project', label: 'Mango project', disabled: false },
-        { value: 'kiwi project', label: 'Kiwi Project', disabled: false },
-        { value: 'litchi project', label: 'Litchi project', disabled: false },
-        { value: 'other', label: 'Other', disabled: false }
-    ]
   
     render() {
-        const { user, project_name, project_desc, logged_in, gpg_key, submitResponse } = this.state;
+        const { user, options, project_name, project_desc, logged_in, gpg_key, submitResponse } = this.state;
         var alertVariant;
+        console.log(project_name)
         submitResponse.result === 'success' ? alertVariant = 'success' : alertVariant = 'danger';
         return (
         <Layout activeItem={1}>
@@ -160,6 +176,7 @@ class RequestForm extends React.Component {
             </FormGroup>
             </div>
             }
+
             {!this.state.newProject  && 
             <FormGroup label="Project Name" fieldId="horizontal-form-title" isRequired>
             <FormSelect
@@ -167,12 +184,12 @@ class RequestForm extends React.Component {
                 onChange={this.onSelectChange}
                 id="horzontal-form-title"
                 name="horizontal-form-title"
-              >
-                {this.options.map((option, index) => (
-                  <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
-                ))}
+            >
+            {options.length > 0 && options.map(
+              (option, index) => <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
+            )}
             </FormSelect>
-            </FormGroup >
+            </FormGroup>
             }
 
             <FormGroup label="GPG Key" fieldId="horizontal-form-name"  helperText="Please enter your GPG Public key for secure transfer of sensitive information." >

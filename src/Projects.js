@@ -1,16 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import {
     Table,
     TableHeader,
     TableBody,
-    sortable,
-    SortByDirection,
-    headerCol,
     TableVariant,
-    expandable,
-    cellWidth
 } from '@patternfly/react-table';
 import Layout from './Layout';
 
@@ -18,7 +12,7 @@ class Projects extends React.Component {
     
     state = {
         logged_in : false,
-        projects: []
+        projects: [],
     }
 
     componentDidMount() {
@@ -43,7 +37,9 @@ class Projects extends React.Component {
                 row.push(project['description'])
                 row.push(project['created_at'])
                 row.push('-')
-                row.push('-')
+                var members = ''
+                project['members'].map((member, index) => { members = members.concat(member, ', ')})
+                row.push(members)
                 const project_url = '/projects/'.concat(project['id'])
                 const project_page_link = { title: <a href={"http://localhost:3000/"}>Go to Project</a> }
                 row.push(project_page_link)

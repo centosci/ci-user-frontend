@@ -1,8 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Layout from './Layout';
-import { Link } from 'react-router-dom';
-import { Card, CardBody, Text, TextContent, Label, Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Card, CardBody, TextContent, Label, Button, FormGroup, TextInput } from '@patternfly/react-core';
 
 class RequestPage extends React.Component {
 
@@ -13,7 +12,7 @@ class RequestPage extends React.Component {
         comments: [],
         reject_reason: '',
         new_comment: ''
-    }
+    };
 
     componentDidMount() {
 
@@ -86,7 +85,7 @@ class RequestPage extends React.Component {
     downloadFile = () => {
         
         var FileSaver = require('file-saver');
-        var projectIsNew = this.state.request['project_desc'] == '' ? false : true;
+        var projectIsNew = this.state.request['project_desc'] === '' ? false : true;
         var fileData = {
             'project_name': this.state.request['project_name'],
             'project_description': this.state.request['project_desc'],
@@ -153,7 +152,7 @@ class RequestPage extends React.Component {
                     {/* Request Label */}
                     <TextContent>
                         {
-                            request['project_desc'] != ''
+                            request['project_desc'] !== ''
                             ?
                              <a download href="./logo.png">
                              <Label style={{'background-color':'#C9F8FF', 'margin':'0px 0px 10px 0px', 'padding':'8px'}}>New Project</Label>
@@ -166,7 +165,7 @@ class RequestPage extends React.Component {
                     {/* Request Description Card */}
                     <Card style={{'padding': '0px 0px 30px 30px'}}>
                         <CardBody style={{'margin':'10px'}}><b>Project Name :</b> <div>{request['project_name']}</div></CardBody>
-                        {request['project_desc'] != '' && 
+                        {request['project_desc'] !== '' && 
                         <CardBody style={{'margin':'10px'}}><b>Project Description :</b> <div>{request['project_desc']}</div></CardBody>
                         }
                         <CardBody style={{'margin':'10px'}}><b>Requested By :</b> <div>{request['requested_by']}</div></CardBody>
@@ -208,7 +207,7 @@ class RequestPage extends React.Component {
                             style={{'margin':'10px 5px 10px 5px', 'padding':'7px', 'float':'right'}} 
                             onClick={()=>this.editRequest('declined')}
                             variant="danger"
-                            isDisabled={reject_reason == '' ? true : false}
+                            isDisabled={reject_reason === '' ? true : false}
                         >
                         Reject Request
                         </Button>
@@ -250,7 +249,7 @@ class RequestPage extends React.Component {
                         />
                         <Button
                             style={{'float':'right', 'padding':'5px', 'margin':'5px 0px 5px 0px'}}
-                            isDisabled={new_comment == '' ? true : false}
+                            isDisabled={new_comment === '' ? true : false}
                             variant="secondary"
                             onClick={this.addComment}
                         >

@@ -6,7 +6,7 @@ import Layout from './Layout';
 function Home () {
     return (
       <Layout>
-      <div style={{'height':'100%'}}>
+      <div>
         <TextContent style={{'margin-left':'40px', 'margin-top':'20px'}}>
         <Text component="h1" style={{'font-size':'35px'}}>Welcome to CentOS CI</Text>
         <Text component="p">
@@ -17,7 +17,7 @@ function Home () {
         </div>
         </Text>
       </TextContent>
-      <img src={largeLogo} style={{'padding': '25px 25px 25px 0px'}}/>
+      <img src={largeLogo} style={{'padding': '25px 25px 25px 0px'}} alt="CentOS Logo"/>
       </div>
       </Layout>
     )
