@@ -17,7 +17,7 @@ function Home () {
         </div>
         </Text>
       </TextContent>
-      <img src={largeLogo} style={{'padding': '25px 25px 25px 0px'}}/>
+      <img src={largeLogo} style={{'padding': '25px 25px 25px 0px'}} alt="CentOS Logo"/>
       </div>
       </Layout>
     )
