@@ -14,8 +14,8 @@ class App extends React.Component {
 
       <Router>
           <Route path="/" exact component={Home}/>
-          <Route path="/requests/" exact component={Requests} />
-          <Route path="/projects/" component={Projects} />
+          <Route path="/requests" exact component={Requests} />
+          <Route path="/projects" component={Projects} />
           <Route path="/new-request" exact component={RequestForm} />
           <Route path="/requests/:requestid" component={RequestPage} />
       </Router>

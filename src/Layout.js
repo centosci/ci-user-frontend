@@ -33,7 +33,7 @@ class Layout extends React.Component {
     };
 
     componentDidMount() {
-        axios.get('http://localhost:5000/user', { withCredentials: true }
+        axios.get('http://ci-backend-new-ci-selfserv.apps.ci.centos.org/user', { withCredentials: true }
         ).then(response => {
             if (response.data.message !== 'Please log in to continue.') {
                 this.setState({user: response.data});
@@ -43,14 +43,14 @@ class Layout extends React.Component {
     }
 
     login = () => {
-        axios.get('http://localhost:5000/login', { withCredentials: true }
+        axios.get('http://ci-backend-new-ci-selfserv.apps.ci.centos.org/login', { withCredentials: true }
         ).then(response => {
             window.location.replace(response.data)
         }).catch(err=>console.log(err))
     };
 
     logout = () => {
-        axios.get('http://localhost:5000/logout', { withCredentials: true }
+        axios.get('http://ci-backend-new-ci-selfserv.apps.ci.centos.org/logout', { withCredentials: true }
         ).then(response => {
             if (response.data.message === 'You have successfully logged out' || response.data.message === 'User is already logged out') {
                 this.setState({user: ''})
@@ -112,7 +112,7 @@ class Layout extends React.Component {
                                 position="right"
                                 onSelect={this.onDropdownSelect}
                                 isOpen={isDropdownOpen}
-                                toggle={<DropdownToggle onToggle={this.onDropdownToggle}>Welcome {user['username']}!</DropdownToggle>}
+                                toggle={<DropdownToggle onToggle={this.onDropdownToggle}>Welcome, {user['username']}!</DropdownToggle>}
                                 dropdownItems={userDropdownItems}
                             /> :
                             <Button
