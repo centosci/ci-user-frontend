@@ -14,9 +14,8 @@
       "express": "^4.17.1"
     },
     "scripts": {
-      "postinstall": "react-scripts build",
       "start": "node bin/www",
-      "build": "react-scripts build",
+      "postinstall": "react-scripts build",
       "test": "react-scripts test",
       "eject": "react-scripts eject"
     },
