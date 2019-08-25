@@ -16,7 +16,7 @@ class RequestPage extends React.Component {
 
     componentDidMount() {
 
-        axios.get('http://ci-backend-latest-ci-selfserv.apps.ci.centos.org/user', { withCredentials: true }
+        axios.get(process.env.REACT_APP_API_URL.concat('/user'), { withCredentials: true }
         ).then(response => {
             
             if (response.data.message !== 'Please log in to continue.') {
@@ -29,7 +29,7 @@ class RequestPage extends React.Component {
         
         }).then((response) => {
             if (response.message !== 'Please log in to continue.') {
-                const url = 'http://ci-backend-latest-ci-selfserv.apps.ci.centos.org/requests/'.concat(this.props.match.params.requestid)
+                const url = process.env.REACT_APP_API_URL.concat('/requests/').concat(this.props.match.params.requestid)
 
                 axios.get(url, { withCredentials: true }
                 ).then(response => {
@@ -42,7 +42,7 @@ class RequestPage extends React.Component {
             else console.log(response.message)
         
         }).catch(err=>console.log(err))
-        
+
     }
 
     editRequest = (action) => {
@@ -54,7 +54,7 @@ class RequestPage extends React.Component {
 
         axios({
             method: 'post',
-            url: 'http://ci-backend-latest-ci-selfserv.apps.ci.centos.org/edit-request/',
+            url: process.env.REACT_APP_API_URL.concat('/edit-request/'),
             withCredentials: true,
             params: 
                 {
@@ -66,7 +66,7 @@ class RequestPage extends React.Component {
             
         }).then(response => {
 
-            const url = 'http://ci-backend-latest-ci-selfserv.apps.ci.centos.org/requests/'.concat(this.props.match.params.requestid)
+            const url = process.env.REACT_APP_API_URL.concat('/requests/').concat(this.props.match.params.requestid)
 
             axios.get(url, { withCredentials: true }
             ).then(response => {
@@ -118,7 +118,7 @@ class RequestPage extends React.Component {
 
         axios({
             method: 'post',
-            url: 'http://ci-backend-latest-ci-selfserv.apps.ci.centos.org/comment',
+            url: process.env.REACT_APP_API_URL.concat('/comment'),
             withCredentials: true,
             data: bodyFormData
         
@@ -126,7 +126,7 @@ class RequestPage extends React.Component {
 
             this.setState({new_comment: ''})
             console.log(response)
-            const url = 'http://ci-backend-latest-ci-selfserv.apps.ci.centos.org/requests/'.concat(this.props.match.params.requestid)
+            const url = process.env.REACT_APP_API_URL.concat('/requests/').concat(this.props.match.params.requestid)
 
             axios.get(url, { withCredentials: true }
             ).then(response => {
