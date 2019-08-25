@@ -16,7 +16,7 @@ class RequestPage extends React.Component {
 
     componentDidMount() {
 
-        axios.get(process.env.REACT_APP_API_URL.concat('/user'), { withCredentials: true }
+        axios.get(this.state.api_url.concat('/user'), { withCredentials: true }
         ).then(response => {
             
             if (response.data.message !== 'Please log in to continue.') {
@@ -29,7 +29,7 @@ class RequestPage extends React.Component {
         
         }).then((response) => {
             if (response.message !== 'Please log in to continue.') {
-                const url = process.env.REACT_APP_API_URL.concat('/requests/').concat(this.props.match.params.requestid)
+                const url = this.state.api_url.concat('/requests/').concat(this.props.match.params.requestid)
 
                 axios.get(url, { withCredentials: true }
                 ).then(response => {
@@ -54,7 +54,7 @@ class RequestPage extends React.Component {
 
         axios({
             method: 'post',
-            url: process.env.REACT_APP_API_URL.concat('/edit-request/'),
+            url: this.state.api_url.concat('/edit-request/'),
             withCredentials: true,
             params: 
                 {
@@ -66,7 +66,7 @@ class RequestPage extends React.Component {
             
         }).then(response => {
 
-            const url = process.env.REACT_APP_API_URL.concat('/requests/').concat(this.props.match.params.requestid)
+            const url = this.state.api_url.concat('/requests/').concat(this.props.match.params.requestid)
 
             axios.get(url, { withCredentials: true }
             ).then(response => {
@@ -118,7 +118,7 @@ class RequestPage extends React.Component {
 
         axios({
             method: 'post',
-            url: process.env.REACT_APP_API_URL.concat('/comment'),
+            url: this.state.api_url.concat('/comment'),
             withCredentials: true,
             data: bodyFormData
         
@@ -126,7 +126,7 @@ class RequestPage extends React.Component {
 
             this.setState({new_comment: ''})
             console.log(response)
-            const url = process.env.REACT_APP_API_URL.concat('/requests/').concat(this.props.match.params.requestid)
+            const url = this.state.api_url.concat('/requests/').concat(this.props.match.params.requestid)
 
             axios.get(url, { withCredentials: true }
             ).then(response => {

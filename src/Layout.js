@@ -29,27 +29,35 @@ class Layout extends React.Component {
         isDropdownOpen: false,
         activeItem: this.props.activeItem,
         user: '',
+        api_url:process.env.REACT_APP_API_URL
     };
 
     componentDidMount() {
-        axios.get(process.env.REACT_APP_API_URL.concat('/user'), { withCredentials: true }
+        var api_url_=process.env.REACT_APP_API_URL
+        console.log('inside CDM of Layout', api_url)
+        console.log('inside CDM of Layout', api_url_)
+
+        axios.get(api_url.concat('/user'), { withCredentials: true }
         ).then(response => {
             if (response.data.message !== 'Please log in to continue.') {
                 this.setState({user: response.data});
             }
-            else this.setState({user: ''});
+            else {
+                this.setState({user: ''});
+                console.log(response.data.message)
+            }
         }).catch(err=>console.log(err))
     }
 
     login = () => {
-        axios.get(process.env.REACT_APP_API_URL.concat('/login'), { withCredentials: true }
+        axios.get(this.state.api_url.concat('/login'), { withCredentials: true }
         ).then(response => {
             window.location.replace(response.data)
         }).catch(err=>console.log(err))
     };
 
     logout = () => {
-        axios.get(process.env.REACT_APP_API_URL.concat('/logout'), { withCredentials: true }
+        axios.get(this.state.api_url.concat('/logout'), { withCredentials: true }
         ).then(response => {
             if (response.data.message === 'You have successfully logged out' || response.data.message === 'User is already logged out') {
                 this.setState({user: ''})
