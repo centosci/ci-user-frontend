@@ -7,7 +7,7 @@ class App extends React.Component {
         var data = document.location.search.substring(1)
         axios({
             method: 'post',
-            url: 'ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/_flask_fas_openid_handler/'),
+            url: 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/_flask_fas_openid_handler/'),
             withCredentials: true,
             data: data
             })

@@ -16,7 +16,7 @@ class Projects extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/projects'), { withCredentials: true }
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/projects'), { withCredentials: true }
         ).then(res=> {
             if (res.data.message !== 'Please log in to continue.') {
                 this.setState({logged_in: true, projects: res.data.projects})

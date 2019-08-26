@@ -33,7 +33,7 @@ class Layout extends React.Component {
 
     componentDidMount() {
 
-        axios.get('ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/user'), { withCredentials: true }
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/user'), { withCredentials: true }
         ).then(response => {
             if (response.data.message !== 'Please log in to continue.') {
                 this.setState({user: response.data});
@@ -46,14 +46,14 @@ class Layout extends React.Component {
     }
 
     login = () => {
-        axios.get('ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/login'), { withCredentials: true }
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/login'), { withCredentials: true }
         ).then(response => {
             window.location.replace(response.data)
         }).catch(err=>console.log(err))
     };
 
     logout = () => {
-        axios.get('ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/logout'), { withCredentials: true }
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/logout'), { withCredentials: true }
         ).then(response => {
             if (response.data.message === 'You have successfully logged out' || response.data.message === 'User is already logged out') {
                 this.setState({user: ''})
