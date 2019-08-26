@@ -3,14 +3,11 @@ import axios from 'axios';
 
 class App extends React.Component {
 
-    state = {
-        api_url:process.env.REACT_APP_API_URL
-    };
     componentDidMount() {
         var data = document.location.search.substring(1)
         axios({
             method: 'post',
-            url: this.state.api_url.concat('/_flask_fas_openid_handler/'),
+            url: 'ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/_flask_fas_openid_handler/'),
             withCredentials: true,
             data: data
             })

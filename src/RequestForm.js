@@ -25,13 +25,12 @@ class RequestForm extends React.Component {
         newProject: true,
         gpg_key: '',
         submitResponse: {},
-        api_url:process.env.REACT_APP_API_URL
     };
 
     componentDidMount() {
 
       // Get the logged in user
-        axios.get(this.state.api_url.concat('/user'), { withCredentials: true}
+        axios.get('ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/user'), { withCredentials: true}
         ).then(response => {
 
             if (response.data.message !== 'Please log in to continue.') {
@@ -43,7 +42,7 @@ class RequestForm extends React.Component {
         }).then(() => {
 
           // Load existing projects for dropdown list
-          axios.get(this.state.api_url.concat('/projects'), { withCredentials: true}
+          axios.get('ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/projects'), { withCredentials: true}
           ).then(response => {
 
             var options = [{value: '', label: '', disabled: false}];
@@ -92,7 +91,7 @@ class RequestForm extends React.Component {
 
       axios({
         method: 'post',
-        url: this.state.api_url.concat('/new-request'),
+        url: 'ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/new-request'),
         data: bodyFormData,
         withCredentials: true
         })
