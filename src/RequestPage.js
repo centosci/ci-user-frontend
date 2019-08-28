@@ -236,7 +236,7 @@ class RequestPage extends React.Component {
                             :   comments.map(comment => {
                                 return <div>
                                         <Label style={{'background-color':'#C9F8FF', 'margin':'10px 10px 10px 0px', 'padding':'5px'}}>{comment['commented_by']} -</Label>
-                                        <Label>{comment['comment']}</Label>
+                                        <span>{comment['comment']}</span>
                                     </div>
                                 })
                         }
