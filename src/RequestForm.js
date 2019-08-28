@@ -24,13 +24,13 @@ class RequestForm extends React.Component {
         project_desc: '',
         newProject: true,
         gpg_key: '',
-        submitResponse: {}
+        submitResponse: {},
     };
 
     componentDidMount() {
 
       // Get the logged in user
-        axios.get('http://localhost:5000/user', { withCredentials: true}
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/user'), { withCredentials: true}
         ).then(response => {
 
             if (response.data.message !== 'Please log in to continue.') {
@@ -42,7 +42,7 @@ class RequestForm extends React.Component {
         }).then(() => {
 
           // Load existing projects for dropdown list
-          axios.get('http://localhost:5000/projects', { withCredentials: true}
+          axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/projects'), { withCredentials: true}
           ).then(response => {
 
             var options = [{value: '', label: '', disabled: false}];
@@ -91,7 +91,7 @@ class RequestForm extends React.Component {
 
       axios({
         method: 'post',
-        url: 'http://localhost:5000/new-request',
+        url: 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/new-request'),
         data: bodyFormData,
         withCredentials: true
         })
@@ -105,9 +105,10 @@ class RequestForm extends React.Component {
   
     render() {
         const { user, options, project_name, project_desc, logged_in, gpg_key, submitResponse } = this.state;
+        
         var alertVariant;
-        console.log(project_name)
         submitResponse.result === 'success' ? alertVariant = 'success' : alertVariant = 'danger';
+
         return (
         <Layout activeItem={1}>
         {!logged_in && <div>Please log in to view this page.</div>}

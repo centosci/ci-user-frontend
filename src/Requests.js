@@ -15,7 +15,7 @@ class Requests extends React.Component {
     state = {
         logged_in: false,
         requests: [],
-        searchParam: ''
+        searchParam: '',
     }
 
     componentDidMount() {
@@ -24,7 +24,7 @@ class Requests extends React.Component {
 
     getRequests = () => {
 
-        axios.get('http://localhost:5000/requests', { withCredentials: true }
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests'), { withCredentials: true }
         ).then(res=> {
             if (res.data.message !== 'Please log in to continue.') {
                 this.setState({logged_in: true, requests: res.data.requests})
@@ -39,7 +39,7 @@ class Requests extends React.Component {
 
     getRequestsByName = () => {
 
-        axios.get('http://localhost:5000/requests',
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests'),
         {
             withCredentials: true,
             params: {'project_name': this.state.searchParam} 
@@ -56,7 +56,7 @@ class Requests extends React.Component {
 
     getRequestsByID = () => {
 
-        axios.get('http://localhost:5000/requests',
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests'),
         {
             withCredentials: true,
             params: {'request_id': this.state.searchParam} 

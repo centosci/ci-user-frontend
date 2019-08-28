@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from "react-router-dom";
 import axios from 'axios';
 
 import {
@@ -33,24 +32,28 @@ class Layout extends React.Component {
     };
 
     componentDidMount() {
-        axios.get('http://localhost:5000/user', { withCredentials: true }
+
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/user'), { withCredentials: true }
         ).then(response => {
             if (response.data.message !== 'Please log in to continue.') {
                 this.setState({user: response.data});
             }
-            else this.setState({user: ''});
+            else {
+                this.setState({user: ''});
+                console.log(response.data.message)
+            }
         }).catch(err=>console.log(err))
     }
 
     login = () => {
-        axios.get('http://localhost:5000/login', { withCredentials: true }
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/login'), { withCredentials: true }
         ).then(response => {
             window.location.replace(response.data)
         }).catch(err=>console.log(err))
     };
 
     logout = () => {
-        axios.get('http://localhost:5000/logout', { withCredentials: true }
+        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/logout'), { withCredentials: true }
         ).then(response => {
             if (response.data.message === 'You have successfully logged out' || response.data.message === 'User is already logged out') {
                 this.setState({user: ''})
@@ -86,13 +89,13 @@ class Layout extends React.Component {
             <Nav onSelect={this.onNavSelect} aria-label="Nav">
                 <NavList variant={NavVariants.default}>
                     <NavItem itemId={0} isActive={activeItem === 0}>
-                        <Link to="/projects">Projects</Link>
+                        <a href={window.location.origin.concat('/projects')}>Projects</a>
                     </NavItem>
                     <NavItem itemId={1} isActive={activeItem === 1}>
-                        <Link to="/new-request">Create New Request</Link>
+                        <a href={window.location.origin.concat('/new-request')}>Create New Request</a>
                     </NavItem>
                     <NavItem itemId={2} isActive={activeItem === 2}>
-                        <Link to="/requests">Project Requests</Link>
+                        <a href={window.location.origin.concat('/requests')}>Project Requests</a>
                     </NavItem>
                 </NavList>
             </Nav>
@@ -112,7 +115,7 @@ class Layout extends React.Component {
                                 position="right"
                                 onSelect={this.onDropdownSelect}
                                 isOpen={isDropdownOpen}
-                                toggle={<DropdownToggle onToggle={this.onDropdownToggle}>Welcome {user['username']}!</DropdownToggle>}
+                                toggle={<DropdownToggle onToggle={this.onDropdownToggle}>Welcome, {user['username']}!</DropdownToggle>}
                                 dropdownItems={userDropdownItems}
                             /> :
                             <Button
@@ -128,8 +131,8 @@ class Layout extends React.Component {
             </Toolbar>
         );
         const Header = (
-            <PageHeader
-                logo={<Link to="/"><img src={logo} alt="CentOS Logo"/></Link>}
+            <PageHeader 
+                logo={<a href={window.location.origin.concat("/")}><img src={logo} alt="CentOS Logo"/></a>}
                 toolbar={PageToolbar}
                 style={{'background-color':'#0B4E94'}}
             />
