@@ -41,7 +41,7 @@ class Projects extends React.Component {
                 project['members'].map((member, index) => { members = members.concat(member, ', ')})
                 row.push(members)
                 const project_url = '/projects/'.concat(project['id'])
-                const project_page_link = { title: <a href={"http://localhost:3000/"}>Go to Project</a> }
+                const project_page_link = { title: <a href={window.location.href}>Go to Project</a> }
                 row.push(project_page_link)
                 rows.push(row)
                 return row
