@@ -42,7 +42,7 @@ class Requests extends React.Component {
         axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests'),
         {
             withCredentials: true,
-            params: {'project_name': this.state.searchParam} 
+            params: {'project_name': this.state.searchParam.trim()} 
         
         }).then(res=> {
 
@@ -59,7 +59,7 @@ class Requests extends React.Component {
         axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests'),
         {
             withCredentials: true,
-            params: {'request_id': this.state.searchParam} 
+            params: {'request_id': this.state.searchParam.trim()} 
         
         }).then(res=> {
 
@@ -94,7 +94,6 @@ class Requests extends React.Component {
         }
 
         return (
-            <Layout activeItem={2}>
             <div>
             {!logged_in && <div>Please log in to view this page.</div>}
             {logged_in &&
@@ -119,7 +118,6 @@ class Requests extends React.Component {
             </div>
             }
             </div>
-            </Layout>
         )
     }
 }

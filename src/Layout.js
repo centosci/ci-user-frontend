@@ -23,11 +23,11 @@ import accessibleStyles from '@patternfly/react-styles/css/utilities/Accessibili
 import { css } from '@patternfly/react-styles';
 import logo from './logo.png';
 
+
 class Layout extends React.Component {
 
     state = {
         isDropdownOpen: false,
-        activeItem: this.props.activeItem,
         user: '',
     };
 
@@ -75,26 +75,21 @@ class Layout extends React.Component {
         });
     };
 
-    onNavSelect = result => {
-        this.setState({
-            activeItem: result.itemId
-        });
-
-    };
-
     render() {
-        const { isDropdownOpen, activeItem, user } = this.state;
+        const { isDropdownOpen, user } = this.state;
+        var { child } = this.props;
+        var { requestid } = this.props.match.params;
 
         const PageNav = (
-            <Nav onSelect={this.onNavSelect} aria-label="Nav">
+            <Nav aria-label="Nav">
                 <NavList variant={NavVariants.default}>
-                    <NavItem itemId={0} isActive={activeItem === 0}>
+                    <NavItem itemId={0} isActive={window.location.pathname === '/projects'}>
                         <a href={window.location.origin.concat('/projects')}>Projects</a>
                     </NavItem>
-                    <NavItem itemId={1} isActive={activeItem === 1}>
+                    <NavItem itemId={1} isActive={window.location.pathname === '/new-request'}>
                         <a href={window.location.origin.concat('/new-request')}>Create New Request</a>
                     </NavItem>
-                    <NavItem itemId={2} isActive={activeItem === 2}>
+                    <NavItem itemId={2} isActive={window.location.pathname === '/requests'}>
                         <a href={window.location.origin.concat('/requests')}>Project Requests</a>
                     </NavItem>
                 </NavList>
@@ -143,7 +138,10 @@ class Layout extends React.Component {
             <React.Fragment>
                 <Page header={Header} sidebar={Sidebar}>
                     <PageSection variant={PageSectionVariants.light} style={{'padding': '25px 25px 25px 25px'}}>
-                        {this.props.children}
+                        {child.type.name == "RequestPage" ? 
+                        React.cloneElement(child, {user : user, requestid: requestid}) :
+                        React.cloneElement(child, {user : user})
+                        }
                     </PageSection>
                 </Page>
             </React.Fragment>

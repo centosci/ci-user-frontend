@@ -1,13 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import Layout from './Layout';
 import { Card, CardBody, TextContent, Label, Button, FormGroup, TextInput } from '@patternfly/react-core';
 
 class RequestPage extends React.Component {
 
     state = {
-        logged_in: false,
-        user: '',
         request: '',
         comments: [],
         reject_reason: '',
@@ -15,33 +12,14 @@ class RequestPage extends React.Component {
     };
 
     componentDidMount() {
+        const url = 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat(window.location.pathname)
 
-        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/user'), { withCredentials: true }
+        axios.get(url, { withCredentials: true }
         ).then(response => {
             
-            if (response.data.message !== 'Please log in to continue.') {
-                this.setState({logged_in: true, user: response.data})
-            }
-
-            else this.setState({logged_in: false, user: ''});
-            
-            return response.data
+            this.setState({request: response.data.current_request, comments: response.data.comments})
         
-        }).then((response) => {
-            if (response.message !== 'Please log in to continue.') {
-                const url = 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests/').concat(this.props.match.params.requestid)
-
-                axios.get(url, { withCredentials: true }
-                ).then(response => {
-                    
-                    this.setState({request: response.data.current_request, comments: response.data.comments})
-                
-                }).catch(err => console.log(err))
-            }
-
-            else console.log(response.message)
-        
-        }).catch(err=>console.log(err))
+        }).catch(err => console.log(err))
 
     }
 
@@ -59,7 +37,7 @@ class RequestPage extends React.Component {
             params: 
                 {
                     'action': action,
-                    'request_id': this.props.match.params.requestid,
+                    'request_id': this.props.requestid,
                     'reject_reason': this.state.reject_reason
                 },
             // formData: bodyFormData
@@ -114,7 +92,7 @@ class RequestPage extends React.Component {
 
         var bodyFormData = new FormData();
         bodyFormData.set('comment', this.state.new_comment);
-        bodyFormData.set('request_id', this.props.match.params.requestid);
+        bodyFormData.set('request_id', this.props.requestid);
 
         axios({
             method: 'post',
@@ -125,7 +103,7 @@ class RequestPage extends React.Component {
         }).then(response => {
 
             this.setState({new_comment: ''})
-            console.log(response)
+            
             const url = 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests/').concat(this.props.match.params.requestid)
 
             axios.get(url, { withCredentials: true }
@@ -142,11 +120,13 @@ class RequestPage extends React.Component {
 
 
     render() {
-        const {request, comments, new_comment, logged_in, user, reject_reason} = this.state;
+        const {request, comments, new_comment, reject_reason} = this.state;
+        const {user, requestid} = this.props;
+
         return (
-            <Layout>
-                {!logged_in && <div>Please log in to view this page.</div>}
-                {logged_in &&
+            <div>
+                {!user && <div>Please log in to view this page.</div>}
+                {user &&
                 <div>
 
                     {/* Request Label */}
@@ -260,7 +240,7 @@ class RequestPage extends React.Component {
                     
                 </div>
                 }
-            </Layout>
+            </div>
         )
     }
 }
