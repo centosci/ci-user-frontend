@@ -13,7 +13,6 @@ import { TextInput, Button } from '@patternfly/react-core';
 class Requests extends React.Component {
 
     state = {
-        logged_in: false,
         requests: [],
         searchParam: '',
     }
@@ -26,8 +25,8 @@ class Requests extends React.Component {
 
         axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests'), { withCredentials: true }
         ).then(res=> {
-            if (res.data.message !== 'Please log in to continue.') {
-                this.setState({logged_in: true, requests: res.data.requests})
+            if (res.data.message == 'success') {
+                this.setState({requests: res.data.requests})
             }
         }).catch(err=>console.log(err))
 
@@ -72,7 +71,9 @@ class Requests extends React.Component {
     }
 
     render() {
-        const {logged_in, requests, searchParam} = this.state;
+        const {requests, searchParam} = this.state;
+        const {user} = this.props;
+
         if (requests.length >= 1) {
 
             var columns = ['Project Name', 'Requested By', 'Approval Status', 'Request ID', 'More Details']
@@ -95,8 +96,8 @@ class Requests extends React.Component {
 
         return (
             <div>
-            {!logged_in && <div>Please log in to view this page.</div>}
-            {logged_in &&
+            {!user && <div>Please log in to view this page.</div>}
+            {user &&
             <div>
                 <div style={{'font-size':'35px'}}>Project Requests</div>
                 <div>
