@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import Layout from './Layout';
 import { Link } from 'react-router-dom';
 import {
     Table,
@@ -58,7 +57,7 @@ class Requests extends React.Component {
         axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests'),
         {
             withCredentials: true,
-            params: {'request_id': this.state.searchParam.trim()} 
+            params: {'reference_id': this.state.searchParam.trim()} 
         
         }).then(res=> {
 
@@ -85,8 +84,8 @@ class Requests extends React.Component {
                 row.push(req['project_name'])
                 row.push(req['requested_by'])
                 row.push(req['status'])
-                row.push(req['id'])
-                const request_url = '/requests/'.concat(req['id'])
+                row.push(req['reference_id'])
+                const request_url = '/requests/'.concat(req['reference_id'])
                 const request_link = { title: <Link to={request_url}>Go to Request</Link> }
                 row.push(request_link)
                 rows.push(row)
