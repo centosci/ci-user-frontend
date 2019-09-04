@@ -17,8 +17,6 @@ import {
 class RequestForm extends React.Component {
 
     state = {
-        logged_in: false,
-        user: '',
         options: [],
         project_name: '',
         project_desc: '',
@@ -28,36 +26,28 @@ class RequestForm extends React.Component {
     };
 
     componentDidMount() {
+      
+      // Load existing projects for dropdown list
+      axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/projects'), { withCredentials: true}
+      ).then(response => {
+        var options = [{value: '', label: '', disabled: false}];
 
-      // Get the logged in user
-        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/user'), { withCredentials: true}
-        ).then(response => {
+        if (response.data.projects.length > 0) {
+          response.data.projects.map(project => {
+            var option = { value: project['project_name'], label: project['project_name'], disabled: false}
+            options.push(option)
+            return option
+          })
+          this.setState({options})
+        }
+      }).catch(err=>console.log(err))
 
-            if (response.data.message !== 'Please log in to continue.') {
-                this.setState({logged_in: true, user: response.data, gpg_key:response.data['gpg_key']})
-            }
+    }
 
-            else this.setState({user: '', logged_in: false});
-
-        }).then(() => {
-
-          // Load existing projects for dropdown list
-          axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/projects'), { withCredentials: true}
-          ).then(response => {
-
-            var options = [{value: '', label: '', disabled: false}];
-            if (response.data.projects.length > 0) {
-              response.data.projects.map(project => {
-                var option = { value: project['project_name'], label: project['project_name'], disabled: false}
-                options.push(option)
-                return option
-              })
-              this.setState({options})
-
-            }
-
-          }).catch(err=>console.log(err))
-        }).catch(err=>console.log(err))
+    componentWillReceiveProps(newProps) {
+      if (newProps.user['gpg_key'] !== "undefined") {
+        this.setState({gpg_key: newProps.user['gpg_key']})
+      }
     }
 
     handleRadioButtonChange = (_, event) => {
@@ -81,9 +71,10 @@ class RequestForm extends React.Component {
     }
 
     submit = () => {
+      
       var bodyFormData = new FormData();
-      bodyFormData.set('username', this.state.user['username']);
-      bodyFormData.set('email', this.state.user['email']);
+      bodyFormData.set('username', this.props.user['username']);
+      bodyFormData.set('email', this.props.user['email']);
       bodyFormData.set('project_name', this.state.project_name);
       bodyFormData.set('project_desc', this.state.project_desc);
       bodyFormData.set('gpg_key', this.state.gpg_key);
@@ -104,15 +95,16 @@ class RequestForm extends React.Component {
     }
   
     render() {
-        const { user, options, project_name, project_desc, logged_in, gpg_key, submitResponse } = this.state;
-        
+        const { options, project_name, project_desc, gpg_key, submitResponse } = this.state;
+        const { user } = this.props;
+
         var alertVariant;
         submitResponse.result === 'success' ? alertVariant = 'success' : alertVariant = 'danger';
 
         return (
-        <Layout activeItem={1}>
-        {!logged_in && <div>Please log in to view this page.</div>}
-        {logged_in &&
+        <div>
+        {!user && <div>Please log in to view this page.</div>}
+        {user &&
         <div>
           <div style={{'font-size':'35px'}}>Create New Request</div>
           <div>Create a request to onboard a new Project or to become a member of an existing project.</div><br/>
@@ -213,8 +205,8 @@ class RequestForm extends React.Component {
           </Form>
         </div>
         }
-        </Layout>
-      );
+       </div>
+      )
     }
 }
   

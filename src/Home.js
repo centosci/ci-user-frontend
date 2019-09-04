@@ -1,11 +1,9 @@
 import React from 'react';
 import {  TextContent, Text } from '@patternfly/react-core';
 import largeLogo from './centos-logo-png-transparent.png';
-import Layout from './Layout';
 
 function Home () {
     return (
-      <Layout>
       <div>
         <TextContent style={{'margin-left':'40px', 'margin-top':'20px'}}>
         <Text component="h1" style={{'font-size':'35px'}}>Welcome to CentOS CI</Text>
@@ -19,7 +17,6 @@ function Home () {
       </TextContent>
       <img src={largeLogo} style={{'padding': '25px 25px 25px 0px'}} alt="CentOS Logo"/>
       </div>
-      </Layout>
     )
 }
 

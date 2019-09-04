@@ -1,13 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import Layout from './Layout';
 import { Card, CardBody, TextContent, Label, Button, FormGroup, TextInput } from '@patternfly/react-core';
 
 class RequestPage extends React.Component {
 
     state = {
-        logged_in: false,
-        user: '',
         request: '',
         comments: [],
         reject_reason: '',
@@ -15,33 +12,14 @@ class RequestPage extends React.Component {
     };
 
     componentDidMount() {
+        const url = 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat(window.location.pathname)
 
-        axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/user'), { withCredentials: true }
+        axios.get(url, { withCredentials: true }
         ).then(response => {
             
-            if (response.data.message !== 'Please log in to continue.') {
-                this.setState({logged_in: true, user: response.data})
-            }
-
-            else this.setState({logged_in: false, user: ''});
-            
-            return response.data
+            this.setState({request: response.data.current_request, comments: response.data.comments})
         
-        }).then((response) => {
-            if (response.message !== 'Please log in to continue.') {
-                const url = 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests/').concat(this.props.match.params.requestid)
-
-                axios.get(url, { withCredentials: true }
-                ).then(response => {
-                    
-                    this.setState({request: response.data.current_request, comments: response.data.comments})
-                
-                }).catch(err => console.log(err))
-            }
-
-            else console.log(response.message)
-        
-        }).catch(err=>console.log(err))
+        }).catch(err => console.log(err))
 
     }
 
@@ -59,7 +37,7 @@ class RequestPage extends React.Component {
             params: 
                 {
                     'action': action,
-                    'request_id': this.props.match.params.requestid,
+                    'reference_id': this.props.requestid,
                     'reject_reason': this.state.reject_reason
                 },
             // formData: bodyFormData
@@ -90,7 +68,7 @@ class RequestPage extends React.Component {
             'project_name': this.state.request['project_name'],
             'project_description': this.state.request['project_desc'],
             'new_project': projectIsNew,
-            'request_id': this.state.request['id'],
+            'request_ref_id': this.state.request['reference_id'],
             'requested_on': this.state.request['created_at'],
             'last_updated_on': this.state.request['updated_at']
         }
@@ -114,7 +92,7 @@ class RequestPage extends React.Component {
 
         var bodyFormData = new FormData();
         bodyFormData.set('comment', this.state.new_comment);
-        bodyFormData.set('request_id', this.props.match.params.requestid);
+        bodyFormData.set('request_ref_id', this.props.requestid);
 
         axios({
             method: 'post',
@@ -125,7 +103,7 @@ class RequestPage extends React.Component {
         }).then(response => {
 
             this.setState({new_comment: ''})
-            console.log(response)
+            
             const url = 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests/').concat(this.props.match.params.requestid)
 
             axios.get(url, { withCredentials: true }
@@ -142,11 +120,13 @@ class RequestPage extends React.Component {
 
 
     render() {
-        const {request, comments, new_comment, logged_in, user, reject_reason} = this.state;
+        const {request, comments, new_comment, reject_reason} = this.state;
+        const {user, requestid} = this.props;
+
         return (
-            <Layout>
-                {!logged_in && <div>Please log in to view this page.</div>}
-                {logged_in &&
+            <div>
+                {!user && <div>Please log in to view this page.</div>}
+                {user &&
                 <div>
 
                     {/* Request Label */}
@@ -169,7 +149,7 @@ class RequestPage extends React.Component {
                         <CardBody style={{'margin':'10px'}}><b>Project Description :</b> <div>{request['project_desc']}</div></CardBody>
                         }
                         <CardBody style={{'margin':'10px'}}><b>Requested By :</b> <div>{request['requested_by']}</div></CardBody>
-                        <CardBody style={{'margin':'10px'}}><b>Request ID :</b> <div>{request['id']}</div></CardBody>
+                        <CardBody style={{'margin':'10px'}}><b>Request ID :</b> <div>{request['reference_id']}</div></CardBody>
                         <CardBody style={{'margin':'10px'}}><b>Approval Status :</b> <div>{request['status']}</div></CardBody>
                     </Card>
 
@@ -236,7 +216,7 @@ class RequestPage extends React.Component {
                             :   comments.map(comment => {
                                 return <div>
                                         <Label style={{'background-color':'#C9F8FF', 'margin':'10px 10px 10px 0px', 'padding':'5px'}}>{comment['commented_by']} -</Label>
-                                        <Label>{comment['comment']}</Label>
+                                        <span>{comment['comment']}</span>
                                     </div>
                                 })
                         }
@@ -260,7 +240,7 @@ class RequestPage extends React.Component {
                     
                 </div>
                 }
-            </Layout>
+            </div>
         )
     }
 }

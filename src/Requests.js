@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import Layout from './Layout';
 import { Link } from 'react-router-dom';
 import {
     Table,
@@ -13,7 +12,6 @@ import { TextInput, Button } from '@patternfly/react-core';
 class Requests extends React.Component {
 
     state = {
-        logged_in: false,
         requests: [],
         searchParam: '',
     }
@@ -26,8 +24,8 @@ class Requests extends React.Component {
 
         axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests'), { withCredentials: true }
         ).then(res=> {
-            if (res.data.message !== 'Please log in to continue.') {
-                this.setState({logged_in: true, requests: res.data.requests})
+            if (res.data.message == 'success') {
+                this.setState({requests: res.data.requests})
             }
         }).catch(err=>console.log(err))
 
@@ -42,7 +40,7 @@ class Requests extends React.Component {
         axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests'),
         {
             withCredentials: true,
-            params: {'project_name': this.state.searchParam} 
+            params: {'project_name': this.state.searchParam.trim()} 
         
         }).then(res=> {
 
@@ -59,7 +57,7 @@ class Requests extends React.Component {
         axios.get('http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests'),
         {
             withCredentials: true,
-            params: {'request_id': this.state.searchParam} 
+            params: {'reference_id': this.state.searchParam.trim()} 
         
         }).then(res=> {
 
@@ -72,7 +70,9 @@ class Requests extends React.Component {
     }
 
     render() {
-        const {logged_in, requests, searchParam} = this.state;
+        const {requests, searchParam} = this.state;
+        const {user} = this.props;
+
         if (requests.length >= 1) {
 
             var columns = ['Project Name', 'Requested By', 'Approval Status', 'Request ID', 'More Details']
@@ -84,8 +84,8 @@ class Requests extends React.Component {
                 row.push(req['project_name'])
                 row.push(req['requested_by'])
                 row.push(req['status'])
-                row.push(req['id'])
-                const request_url = '/requests/'.concat(req['id'])
+                row.push(req['reference_id'])
+                const request_url = '/requests/'.concat(req['reference_id'])
                 const request_link = { title: <Link to={request_url}>Go to Request</Link> }
                 row.push(request_link)
                 rows.push(row)
@@ -94,10 +94,9 @@ class Requests extends React.Component {
         }
 
         return (
-            <Layout activeItem={2}>
             <div>
-            {!logged_in && <div>Please log in to view this page.</div>}
-            {logged_in &&
+            {!user && <div>Please log in to view this page.</div>}
+            {user &&
             <div>
                 <div style={{'font-size':'35px'}}>Project Requests</div>
                 <div>
@@ -119,7 +118,6 @@ class Requests extends React.Component {
             </div>
             }
             </div>
-            </Layout>
         )
     }
 }
