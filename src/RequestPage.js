@@ -44,7 +44,7 @@ class RequestPage extends React.Component {
             
         }).then(response => {
 
-            const url = 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests/').concat(this.props.match.params.requestid)
+            const url = 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests/').concat(this.props.requestid)
 
             axios.get(url, { withCredentials: true }
             ).then(response => {
@@ -104,7 +104,7 @@ class RequestPage extends React.Component {
 
             this.setState({new_comment: ''})
             
-            const url = 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests/').concat(this.props.match.params.requestid)
+            const url = 'http://ci-backend-ci-selfserv.apps.ci.centos.org'.concat('/requests/').concat(this.props.requestid)
 
             axios.get(url, { withCredentials: true }
             ).then(response => {
